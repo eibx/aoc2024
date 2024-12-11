@@ -1,5 +1,4 @@
 #include "basic.c"
-#include <math.h>
 
 u64 num_digits(u64 n) {
     return
@@ -21,6 +20,28 @@ u64 num_digits(u64 n) {
 (n > 999) ? 4 :
 (n > 99) ? 3 :
 (n > 9) ? 2 : 1;
+}
+
+u64 power10(u64 n) {
+    return
+(n == 0)  ? 1 :
+(n == 1)  ? 10 :
+(n == 2)  ? 100 :
+(n == 3)  ? 1000 :
+(n == 4)  ? 10000 :
+(n == 5)  ? 100000 :
+(n == 6)  ? 1000000 :
+(n == 7)  ? 10000000 :
+(n == 8)  ? 100000000 :
+(n == 9)  ? 1000000000 :
+(n == 10) ? 10000000000 :
+(n == 11) ? 100000000000 :
+(n == 12) ? 1000000000000 :
+(n == 13) ? 10000000000000 :
+(n == 14) ? 100000000000000 :
+(n == 15) ? 1000000000000000 :
+(n == 16) ? 10000000000000000 :
+(n == 17) ? 100000000000000000 : 1000000000000000000;
 }
 
 u64 part_1(u8* content, u32 file_size) {
@@ -51,8 +72,8 @@ u64 part_1(u8* content, u32 file_size) {
 
             u64 digits = num_digits(number);
             if (digits % 2 == 0) {
-                u64 power = (u64)pow(10, (i32)(digits / 2));
-                u64 left = (u64)(number / power);
+                u64 power = power10(digits / 2);
+                u64 left = number / power;
                 u64 right = number - (left * power);
                 for (u64 k = stone_count; k > j; k--) {
                     stones_new[k] = stones[k-1];
@@ -60,7 +81,7 @@ u64 part_1(u8* content, u32 file_size) {
                 stones_new[stone_new_count++] = left;
                 stones_new[stone_new_count++] = right;
             } else {
-                stones[stone_new_count++] = number * 2024;
+                stones_new[stone_new_count++] = number * 2024;
             }
         }
 
