@@ -31,3 +31,12 @@ u8* load_file(const char* filename, u32* file_size) {
 
     return buffer;
 }
+
+u8* load_file_wh(const char* filename, u32* file_size, u32* width, u32* height) {
+    u8* buffer = load_file(filename, file_size);
+    for (u32 i = 0; i < *file_size; i++) {
+        if (buffer[i] == '\n') { *width = i+1; break; }
+    }
+    *height = *file_size / *width;
+    return buffer;
+}
