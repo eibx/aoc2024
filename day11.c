@@ -84,8 +84,67 @@ u64 part_1(u8* content, u32 file_size) {
     return stone_count;
 }
 
+typedef struct { u64 number; u64 count;} StoneGroup;
+StoneGroup* stones;
+StoneGroup* stones_new;
+u64 stones_count = 0;
+u64 stones_new_count = 0;
+void set_stone(u64 number, u64 count) {
+    for (i32 i = 0; i < stones_new_count; i++) {
+        if (stones_new[i].number == number) {
+            stones_new[i].count += count;
+            return;
+        }
+    }
+    stones_new[stones_new_count++] = (StoneGroup){ number, count };
+}
 u64 part_2(u8* content, u32 file_size) {
-    return 0;
+    stones = (StoneGroup*)malloc(5000*sizeof(StoneGroup));
+    stones_new = (StoneGroup*)malloc(5000*sizeof(StoneGroup));
+
+    u64 n = 0;
+    for (i32 i = 0; i < file_size; i++) {
+        if (content[i] >= '0' && content[i] <= '9') {
+            n *= 10;
+            n += content[i]-'0';
+        } else {
+            set_stone(n, 1);
+            n = 0;
+        }
+    }
+
+    for (u64 i = 0; i < 75; i++) {
+        StoneGroup* tmp = stones;
+        stones = stones_new;
+        stones_new = tmp;
+        stones_count = stones_new_count;
+        stones_new_count = 0;
+
+        for (u64 j = 0; j < stones_count; j++) {
+            StoneGroup group = stones[j];
+            if (group.number == 0) {
+                set_stone(1, group.count);
+                continue;
+            }
+
+            u64 digits = num_digits(group.number);
+            if (digits % 2 == 0) {
+                u64 power = power10(digits / 2);
+                u64 left = group.number / power;
+                u64 right = group.number - (left * power);
+                set_stone(left, group.count);
+                set_stone(right, group.count);
+            } else {
+                set_stone(group.number * 2024, group.count);
+            }
+        }
+    }
+
+    u64 sum = 0;
+    for (i32 i = 0; i < stones_new_count; i++) {
+        sum += stones_new[i].count;
+    }
+    return sum;
 }
 
 i32 main() {
